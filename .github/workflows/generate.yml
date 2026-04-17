@@ -61,10 +61,12 @@ jobs:
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git add .
+          rm -rf proto-src
+          git add "${OUTPUT_DIR}"
           if git diff --staged --quiet; then
             echo "No generated changes found"
             exit 0
           fi
           git commit -m "chore: regenerate protobuf"
-          git push
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin HEAD:"${{ github.ref_name }}"
